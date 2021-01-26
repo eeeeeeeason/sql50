@@ -10,6 +10,7 @@
 # 12 orderby进行升降序 desc，注意left join的使用，不正确的leftjoin 会出现大量的null
 # 14 处理求几个个数时可以在select内使用sum配合case when xx then 1 else 0 但是这里的case后面为什么添加字段 score后会查不出来
 # 1.1 查找同时存在01课程和02课程的情况
+# 15 select 中使用case能进行计算与赋值,变量@sco存上一个变量，判断是否重复，@rank计数，when @sco:=score 恒成立
 SELECT * FROM
 SC a
 INNER JOIN
@@ -253,14 +254,17 @@ GROUP BY CId
 
 #15 按各科成绩进行排序，并显示排名，score重复时合并名次 @rank设置变量进行排序
 
-SELECT
- SId,CId,score,
- CASE 
-	WHEN (@sco=score) THEN @rank
-	ELSE @rank:=@rank+1 end as rn,
- @sco:=score
+
+SELECT SId,CId,score,
+CASE 
+	WHEN @sco=score THEN
+		@rank
+	WHEN @sco:=score THEN
+		@rank:=@rank+1
+END AS rrk
+
 FROM
-SC, (SELECT @rank:=0,@sco:=0) as t
+SC,(SELECT @rank:=0,@sco:=0) AS rk
 ORDER BY score DESC
 
 
