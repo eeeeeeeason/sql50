@@ -1,0 +1,3 @@
+- 修改制表间隔符号
+  - alter table score set serdeproperties('field.delim'='\t');
+- 
